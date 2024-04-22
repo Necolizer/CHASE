@@ -1,0 +1,60 @@
+seed: 1
+work_dir: ./exp/hd/h2o_chase
+run_mode: h2o_test_get_results
+
+# feeder
+feeder: feeders.feeder_h2o.Feeder_Test
+test_feeder_args:
+  data_path: data/h2o/h2o_pth
+  split: test 
+  debug: False
+  window_size: 120
+  p_interval: [0.95]
+  vel: False
+  bone: False
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 120
+  num_point: 21
+  num_entity: 3
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.HDGCN.HDGCN.Model
+model_args:
+  num_class: 36
+  num_point: 21
+  num_person: 3
+  in_channels: 3
+  dataset: 'H2O'
+  graph: model.HDGCN.graph.h2o_hierarchy.Graph
+  graph_args:
+    labeling_mode: 'spatial'
+    CoM: 1
+
+#optim
+optimizer: AdamW
+weight_decay: 0.0004
+base_lr: 0.1
+lr_decay_rate: 0.1
+step: [60, 90, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD
+loss_args:
+  smoothing: 0.15
+  temperature: 1.0
+  weights: [1.0, 0.1]
+
+# training
+device: [0]
+cuda_visible_device: '7'
+batch_size: 32
+test_batch_size: 32
+num_epoch: 150
+

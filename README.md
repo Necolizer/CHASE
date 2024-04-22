@@ -1,1 +1,1 @@
-# CHASE
+# CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition
