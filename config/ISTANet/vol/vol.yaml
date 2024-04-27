@@ -60,7 +60,7 @@ test_feeder_args:
   
 
 # model
-model: model.ISTANet.ISTANet.Model_GROUP_VOL
+model: model.ISTANet.ISTANet.Model_GROUP
 model_args:
   window_size: [10, 1, 1]
   num_frames: 10

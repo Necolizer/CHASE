@@ -69,7 +69,7 @@ wrapper_args:
   pooling_seg: [1,1,1]
   c1: 64
   c2: 8
-model: model.STSANet.stsanet.Model_GROUP_VOL
+model: model.STSANet.stsanet.Model_GROUP
 model_args:
   len_parts: 1
   num_frames: 10
