@@ -9,7 +9,11 @@
   <img src='https://img.shields.io/badge/License-MIT-yellow?style=flat' alt='license'>
 </a>
 
-Here's the official implementation of *CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition* accepted in [NeurIPS 2024](https://nips.cc/Conferences/2024).
+Here's the official implementation of [CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition](https://arxiv.org/abs/2410.07153) accepted in [NeurIPS 2024](https://nips.cc/virtual/2024/poster/94816).
+
+![](https://github.com/Necolizer/CHASE/blob/gh-pages/static/images/EntityBias.svg)
+
+![](https://github.com/Necolizer/CHASE/blob/gh-pages/static/images/Viz.svg)
 
 ## 0. Table of Contents
 
@@ -22,11 +26,12 @@ Here's the official implementation of *CHASE: Learning Convex Hull Adaptive Shif
 * [7. Citation](#7-citation)
 
 ## 1. Change Log
-- [2024/10/11] Our paper is available in [arXiv](https://arxiv.org/abs/2410.07153). Visit our [project website](https://necolizer.github.io/CHASE/)!
+- [2025/01/18] Our paper, poster, and slide are available on [NeurIPS 2024 page](https://nips.cc/virtual/2024/poster/94816).
+- [2024/10/11] Our paper is available in [arXiv](https://arxiv.org/abs/2410.07153). Visit our [project page](https://necolizer.github.io/CHASE/)!
 - [2024/09/27] This work is accepted by [NeurIPS 2024](https://nips.cc/Conferences/2024). We make our scripts and checkpoints public.
 
 ## 2. Prerequisites
-To clone the `main` branch only (for code) and exclude the `gh-pages` branch (for project website), use the following `git` command:
+To clone the `main` branch only (for code) and exclude the `gh-pages` branch (for project page), use the following `git` command:
 ```shell
 git clone -b main https://github.com/Necolizer/CHASE.git
 ```
