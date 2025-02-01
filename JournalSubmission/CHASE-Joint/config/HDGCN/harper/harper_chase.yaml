@@ -1,0 +1,63 @@
+seed: 1
+work_dir: ./exp/hd/harper_chase
+run_mode: train
+
+# feeder
+feeder: feeders.feeder_harper.Feeder
+train_feeder_args:
+  data_path: data/HARPER/30hz
+  split: train
+  debug: False
+  p_interval: [0.5, 1]
+  window_size: 120
+  random_rot: True
+
+test_feeder_args:
+  data_path: data/HARPER/30hz
+  split: test
+  debug: False
+  p_interval: [0.95]
+  window_size: 120
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3
+  num_frame: 120
+  num_point: 23
+  num_entity: 2
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.HDGCN.HDGCN.Model
+model_args:
+  num_class: 15
+  num_point: 23
+  num_person: 2
+  graph: model.HDGCN.graph.harper_hierarchy.Graph
+  graph_args:
+    labeling_mode: 'spatial'
+    CoM: 1
+
+#optim
+optimizer: AdamW
+weight_decay: 0.0004
+base_lr: 5.e-3
+lr_decay_rate: 0.1
+step: [60, 90, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD
+loss_args:
+  smoothing: 0.1
+  temperature: 1.0
+  weights: [1.0, 0.1]
+
+# training
+device: [0]
+cuda_visible_device: '0'
+batch_size: 32
+test_batch_size: 32
+num_epoch: 160

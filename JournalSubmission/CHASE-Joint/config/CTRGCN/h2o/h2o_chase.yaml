@@ -1,0 +1,73 @@
+seed: 1
+work_dir: ./exp/ctr/h2o_chase
+run_mode: train
+
+# feeder
+feeder: feeders.feeder_h2o.Feeder
+train_feeder_args:
+  data_path: data/h2o/h2o_pth
+  split: train
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 120
+  normalization: False
+  random_rot: True
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+  entity_rearrangement: False
+  random_spatial_shift: True
+
+test_feeder_args:
+  data_path: data/h2o/h2o_pth
+  split: val 
+  debug: False
+  window_size: 120
+  p_interval: [0.95]
+  vel: False
+  bone: False
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 120
+  num_point: 21
+  num_entity: 3
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.CTRGCN.ctrgcn.Model
+model_args:
+  num_class: 36
+  num_point: 21
+  num_person: 3
+  graph: model.CTRGCN.graph.h2o.Graph
+  graph_args:
+    labeling_mode: 'spatial'
+
+#optim
+optimizer: AdamW
+weight_decay: 0.0004
+base_lr: 5.e-2
+lr_decay_rate: 0.1
+step: [60, 90, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD
+loss_args:
+  smoothing: 0.15
+  temperature: 1.0
+  weights: [1.0, 0.1]
+
+# training
+device: [0,1]
+cuda_visible_device: '0,1'
+batch_size: 32
+test_batch_size: 32
+num_epoch: 150
+

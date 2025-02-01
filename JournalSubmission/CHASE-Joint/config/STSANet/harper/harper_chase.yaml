@@ -1,0 +1,70 @@
+seed: 1
+work_dir: ./exp/stsa/harper_chase
+run_mode: train
+
+# feeder
+feeder: feeders.feeder_harper.Feeder
+train_feeder_args:
+  data_path: data/HARPER/30hz
+  split: train
+  debug: False
+  p_interval: [0.5, 1]
+  window_size: 120
+  random_rot: True
+
+test_feeder_args:
+  data_path: data/HARPER/30hz
+  split: test
+  debug: False
+  p_interval: [0.95]
+  window_size: 120
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 120
+  num_point: 23
+  num_entity: 2
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+# see https://www.sciencedirect.com/science/article/pii/S0925231222013716 section 4.2
+model: model.STSANet.stsanet.Model
+model_args:
+  len_parts: 6
+  num_frames: 120
+  num_joints: 23
+  num_classes: 15
+  num_heads: 3
+  kernel_size: [3, 5]
+  num_persons: 2
+  num_channels: 3
+  use_pes: True
+  config: [[64,  64,  16], [64,  64,  16], 
+           [64,  128, 32], [128, 128, 32],
+           [128, 256, 64], [256, 256, 64], 
+           [256, 256, 64]]
+
+#optim
+optimizer: AdamW
+weight_decay: 0.0004
+base_lr: 5.e-3
+lr_decay_rate: 0.1
+step: [60, 90, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD
+loss_args:
+  smoothing: 0.1
+  temperature: 1.0
+  weights: [1.0, 0.1]
+
+# training
+device: [0]
+cuda_visible_device: '0'
+batch_size: 32
+test_batch_size: 32
+num_epoch: 160

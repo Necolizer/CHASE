@@ -1,0 +1,111 @@
+seed: 1
+work_dir: ./exp/stsa/vol_original_chase
+run_mode: train
+
+# feeder
+feeder: feeders.feeder_vol.Volleyball
+train_feeder_args:
+  dataset_name: volleyball
+  dataset_dir: data/volleyball
+  olympic_split: False
+  ball_trajectory_use: True
+  joints_folder_name: joints
+  tracklets_file_name: tracks_normalized.pkl
+  person_action_label_file_name: tracks_normalized_with_person_action_label.pkl
+  ball_trajectory_folder_name: volleyball_ball_annotation
+  horizontal_flip_augment: True
+  horizontal_flip_augment_purturb: True
+  horizontal_move_augment: True
+  horizontal_move_augment_purturb: True
+  vertical_move_augment: True
+  vertical_move_augment_purturb: True
+  agent_dropout_augment: True
+  image_h: 720
+  image_w: 1280
+  num_classes: 8
+  num_person_action_classes: 10
+  frame_start_idx: 5
+  frame_end_idx: 14
+  frame_sampling: 1
+  N: 12 
+  J: 17
+  T: 10
+  recollect_stats_train: True
+  split: train
+  print_cls_idx: True
+  debug: False
+
+test_feeder_args:
+  dataset_name: volleyball
+  dataset_dir: data/volleyball
+  olympic_split: False
+  ball_trajectory_use: True
+  joints_folder_name: joints
+  tracklets_file_name: tracks_normalized.pkl
+  person_action_label_file_name: tracks_normalized_with_person_action_label.pkl
+  ball_trajectory_folder_name: volleyball_ball_annotation
+  image_h: 720
+  image_w: 1280
+  num_classes: 8
+  num_person_action_classes: 10
+  frame_start_idx: 5
+  frame_end_idx: 14
+  frame_sampling: 1
+  N: 12 
+  J: 17
+  T: 10
+  split: test
+  print_cls_idx: True
+  debug: False
+  
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 2 
+  num_frame: 10
+  num_point: 17
+  num_entity: 14 # if use ball then N+2 (12+2=14)
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.STSANet.stsanet.Model_GROUP
+model_args:
+  len_parts: 1
+  num_frames: 10
+  num_joints: 17
+  num_classes: 8
+  num_heads: 3
+  kernel_size: [3, 5]
+  num_persons: 14 # if use ball then N+2 (12+2=14)
+  num_channels: 2
+  use_pes: True
+  config: [[64,  64,  16], [64,  64,  16], 
+           [64,  128, 32], [128, 128, 32],
+           [128, 256, 64], [256, 256, 64], 
+           [256, 256, 64]]
+  num_class_person: 11 # if use ball then (10+1=11)
+
+
+#optim
+optimizer: SGD
+weight_decay: 0.0004
+base_lr: 0.1 #0.01 #0.1
+lr_decay_rate: 0.1
+step: [25, 45]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD_GROUP
+loss_args:
+  smoothing: 0.1
+  temperature: 1.0
+  weights: [1.0, 0.1]
+
+# training
+device: [0,1,2,3,4,5,6,7]
+cuda_visible_device: '0,1,2,3,4,5,6,7'
+batch_size: 192
+test_batch_size: 192
+num_epoch: 55

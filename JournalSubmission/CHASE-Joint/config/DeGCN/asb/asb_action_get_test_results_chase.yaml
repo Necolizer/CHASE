@@ -1,0 +1,58 @@
+seed: 1
+work_dir: ./exp/degcn/asb_action_chase
+run_mode: asb_test_get_results
+
+# feeder
+feeder: feeders.feeder_asb.Feeder_Test
+test_feeder_args:
+  data_path: data/asb/share_contex25_thresh0/test_data_joint_200.npy
+  debug: False
+  window_size: 64
+  p_interval: [0.95]
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 64
+  num_point: 21
+  num_entity: 2
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.DeGCN.degcn.Model
+model_args:
+  num_class: 1380
+  num_point: 21
+  num_person: 2
+  in_channels: 3
+  base_frame: 64
+  k: 8
+  eta: 4
+  num_stream: 2
+  graph: model.DeGCN.graph.asb101.Graph
+  graph_args:
+    labeling_mode: 'spatial'
+
+#optim
+optimizer: SGD
+weight_decay: 0.0004
+base_lr: 0.1
+lr_decay_rate: 0.1
+step: [35, 45, 55]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD
+loss_args:
+  smoothing: 0.1
+  temperature: 1.1
+  weights: [1.0, 0.1]
+
+# training
+device: [0]
+cuda_visible_device: '7'
+batch_size: 128
+test_batch_size: 128
+num_epoch: 60

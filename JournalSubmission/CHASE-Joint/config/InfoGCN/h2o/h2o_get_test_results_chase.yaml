@@ -1,0 +1,66 @@
+seed: 1
+work_dir: ./exp/info/h2o_k1_chase
+run_mode: h2o_test_get_results
+
+# feeder
+feeder: feeders.feeder_h2o.Feeder_Test
+test_feeder_args:
+  data_path: data/h2o/h2o_pth
+  split: test 
+  debug: False
+  window_size: 120
+  p_interval: [0.95]
+  vel: False
+  bone: False
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 120
+  num_point: 21
+  num_entity: 3
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.InfoGCN.infogcn.InfoGCN
+model_args:
+  graph: model.InfoGCN.graph.h2o.Graph
+  num_point: 21
+  num_class: 36
+  num_head: 3
+  num_person: 3
+  num_channels: 3
+  k: 1
+  drop_out: 0
+  noise_ratio: 0.5
+  config: [[64,  64,  1], [64,  64,  1], [64,  64,  1], 
+           [64,  128, 2], [128, 128, 1], [128, 128, 1],
+           [128, 256, 2], [256, 256, 1], [256, 256, 1]]
+
+#optim
+optimizer: AdamW
+weight_decay: 0.0004
+base_lr: 1.e-3
+lr_decay_rate: 0.1
+step: [60, 90, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: InfoGCN_Loss_MBMMD
+loss_args:
+  smoothing: 0.15
+  temperature: 1.0
+  weights: [1.0, 0.1, 0.0001, 0.1]
+  class_num: 36
+  out_channels: 256
+  gain: 3
+
+# training
+device: [0]
+cuda_visible_device: '7'
+batch_size: 16
+test_batch_size: 16
+num_epoch: 150
+

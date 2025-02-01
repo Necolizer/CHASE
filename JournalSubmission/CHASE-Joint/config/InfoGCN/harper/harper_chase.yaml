@@ -1,0 +1,71 @@
+seed: 1
+work_dir: ./exp/info/harper_chase
+run_mode: train
+
+# feeder
+feeder: feeders.feeder_harper.Feeder
+train_feeder_args:
+  data_path: data/HARPER/30hz
+  split: train
+  debug: False
+  p_interval: [0.5, 1]
+  window_size: 120
+  random_rot: True
+
+test_feeder_args:
+  data_path: data/HARPER/30hz
+  split: test
+  debug: False
+  p_interval: [0.95]
+  window_size: 120
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 120
+  num_point: 23
+  num_entity: 2
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.InfoGCN.infogcn.InfoGCN
+model_args:
+  graph: model.InfoGCN.graph.harper.Graph
+  num_point: 23
+  num_class: 15
+  num_head: 3
+  num_person: 2
+  num_channels: 3
+  k: 1
+  drop_out: 0
+  noise_ratio: 0.5
+  config: [[64,  64,  1], [64,  64,  1], [64,  64,  1], 
+           [64,  128, 2], [128, 128, 1], [128, 128, 1],
+           [128, 256, 2], [256, 256, 1], [256, 256, 1]]
+
+#optim
+optimizer: AdamW
+weight_decay: 0.0004
+base_lr: 5.e-3
+lr_decay_rate: 0.1
+step: [60, 90, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: InfoGCN_Loss_MBMMD
+loss_args:
+  smoothing: 0.1
+  temperature: 1.0
+  weights: [1.0, 0.1, 0.0001, 0.1]
+  class_num: 15
+  out_channels: 256
+  gain: 3
+
+# training
+device: [0]
+cuda_visible_device: '0'
+batch_size: 32
+test_batch_size: 32
+num_epoch: 160

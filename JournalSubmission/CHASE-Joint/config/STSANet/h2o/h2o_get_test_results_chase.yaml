@@ -1,0 +1,65 @@
+seed: 1
+work_dir: ./exp/stsa/h2o_chase
+run_mode: h2o_test_get_results
+
+# feeder
+feeder: feeders.feeder_h2o.Feeder_Test
+test_feeder_args:
+  data_path: data/h2o/h2o_pth
+  split: test 
+  debug: False
+  window_size: 120
+  p_interval: [0.95]
+  vel: False
+  bone: False
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 120
+  num_point: 21
+  num_entity: 3
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+# see https://www.sciencedirect.com/science/article/pii/S0925231222013716 section 4.2
+model: model.STSANet.stsanet.Model
+model_args:
+  len_parts: 6
+  num_frames: 120
+  num_joints: 21
+  num_classes: 36
+  num_heads: 3
+  kernel_size: [3, 5]
+  num_persons: 3
+  num_channels: 3
+  use_pes: True
+  config: [[64,  64,  16], [64,  64,  16], 
+           [64,  128, 32], [128, 128, 32],
+           [128, 256, 64], [256, 256, 64], 
+           [256, 256, 64]]
+
+#optim
+optimizer: AdamW
+weight_decay: 0.0004
+base_lr: 5.e-3
+lr_decay_rate: 0.1
+step: [60, 90, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD
+loss_args:
+  smoothing: 0.15
+  temperature: 1.0
+  weights: [1.0, 0.1]
+
+# training
+device: [0]
+cuda_visible_device: '0'
+batch_size: 16
+test_batch_size: 16
+num_epoch: 150
+

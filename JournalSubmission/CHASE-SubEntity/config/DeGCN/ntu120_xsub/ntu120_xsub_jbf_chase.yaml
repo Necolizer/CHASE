@@ -1,0 +1,81 @@
+seed: 1
+work_dir: ./exp/degcn/ntu120_xsub/jbf/chase
+run_mode: train
+
+feeder: feeders.feeder_ntu.Feeder
+train_feeder_args:
+  data_path: data/ntu120/NTU120_CSub.npz
+  split: train
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 64
+  normalization: False
+  random_rot: True
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+  random_spatial_shift: True
+  action_type: all
+  data_type: wholebody
+
+test_feeder_args:
+  data_path: data/ntu120/NTU120_CSub.npz
+  split: test  
+  debug: False
+  window_size: 64
+  p_interval: [0.95]
+  vel: False
+  bone: False
+  action_type: all
+  data_type: wholebody
+
+# model
+wrapper: model.Wrapper.chas.CHASWrapper
+wrapper_args:
+  in_channels: 3 
+  num_frame: 64
+  num_point: 25
+  num_entity: 2
+  pooling_seg: [1,1,1]
+  c1: 64
+  c2: 8
+model: model.DeGCN.jbf.Model
+model_args:
+  num_class: 120
+  num_point: 25
+  num_person: 2
+  in_channels: 3
+  base_frame: 64
+  k: 8
+  eta: 4
+  num_stream: 2
+  graph: model.DeGCN.graph.ntu_rgb_d.Graph
+  graph_args:
+    labeling_mode: 'spatial'
+
+#optim
+optimizer: SGD
+weight_decay: 0.0004
+base_lr: 0.1
+lr_decay_rate: 0.1
+step: [80, 100, 120]
+warm_up_epoch: 5
+nesterov: True
+
+# loss
+loss: LSCE_MBMMD
+loss_args:
+  smoothing: 0.1
+  temperature: 1.0
+  weights: [1.0, 0.1]
+
+# training
+device: [0,1,2]
+cuda_visible_device: '5,6,7'
+batch_size: 72
+test_batch_size: 72
+num_epoch: 130
+eval_interval: 2
+save_score: True
