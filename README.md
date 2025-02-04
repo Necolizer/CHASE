@@ -1,7 +1,7 @@
 # CHASE
 
 Here's the official implementation of 
-1. Normalization with Convex Hull Adaptive Shift for Skeleton-based Action Recognition (Under Review)
+1. De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift (Under Review)
 2. [CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition](https://arxiv.org/abs/2410.07153) accepted in [NeurIPS 2024](https://nips.cc/virtual/2024/poster/94816).
 
 ![](https://github.com/Necolizer/CHASE/blob/gh-pages/static/images/EntityBias.svg)
@@ -9,7 +9,7 @@ Here's the official implementation of
 ![](https://github.com/Necolizer/CHASE/blob/gh-pages/static/images/Viz.svg)
 
 
-## 1. Normalization with Convex Hull Adaptive Shift for Skeleton-based Action Recognition
+## 1. De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift
 
 Implementation: See folder `JournalSubmission` with [README](./JournalSubmission/CHASE-Joint/README.md) & [README](./JournalSubmission/CHASE-SubEntity/README.md)
 
