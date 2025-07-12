@@ -1,4 +1,4 @@
-# CHASE
+# CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition
 
 Here's the official implementation of 
 1. De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift (Under Review)
@@ -11,22 +11,46 @@ Here's the official implementation of
 
 ## 1. De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift
 
-Implementation: See folder `JournalSubmission` with [README](./JournalSubmission/CHASE-Joint/README.md) & [README](./JournalSubmission/CHASE-SubEntity/README.md)
+Detailed Implementation: See folder `JournalSubmission` [README 1](./JournalSubmission/CHASE-Joint/README.md) & [README 2](./JournalSubmission/CHASE-SubEntity/README.md)
 
 
 ## 2. [NeurIPS'24] CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition
 
-Implementation: See folder `NeurIPS24` with [README](./NeurIPS24/README.md)
+Detailed Implementation: See folder `NeurIPS24` [README](./NeurIPS24/README.md)
+
+To clone the `main` branch only (for code) and exclude the `gh-pages` branch (for project page), use the following `git` command:
+```shell
+git clone -b main https://github.com/Necolizer/CHASE.git
+cd ./NeurIPS24
+pip install -r requirements.txt 
+```
+
+For datasets:
+- Please refer to [ISTA-Net](https://github.com/Necolizer/ISTA-Net) and follow the instructions in section [Prepare the Datasets](https://github.com/Necolizer/ISTA-Net?tab=readme-ov-file#3-prepare-the-datasets) to prepare NTU Mutual 11 & 26, H2O, and Assembly101.
+- Please refer to [COMPOSER](https://github.com/hongluzhou/composer) repo's section [Dataset Preparation](https://github.com/hongluzhou/composer?tab=readme-ov-file#dataset-preparation) to get Collective Activity and Volleyball. You could directly download the data using their provided google drive links.
+
+To run the code:
+```shell
+python main.py --config config/[yourBackboneName]/[dataset]/[yourSetting]_chase.yaml
+python main_group.py --config config/[yourBackboneName]/[cadORvol]/[yourSetting]_chase.yaml
+```
+
+Checkpoints of the best backbone for each benchmark are provided in this [Hugging Face repo](https://huggingface.co/Necolizer/CHASE).
 
 ## 3. Citation
 
 If you find this work or code helpful in your research, please consider citing:
 ```
-@inproceedings{wen2024chase,
-    title={CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition},
-    author={Yuhang Wen and Mengyuan Liu and Songtao Wu and Beichen Ding},
-    booktitle={Thirty-eighth Conference on Neural Information Processing Systems (NeurIPS)},
-    year={2024},
+@inproceedings{NEURIPS2024_wen2024chase,
+    author = {Wen, Yuhang and Liu, Mengyuan and Wu, Songtao and Ding, Beichen},
+    booktitle = {Advances in Neural Information Processing Systems},
+    editor = {A. Globerson and L. Mackey and D. Belgrave and A. Fan and U. Paquet and J. Tomczak and C. Zhang},
+    pages = {9388--9420},
+    publisher = {Curran Associates, Inc.},
+    title = {CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition},
+    url = {https://proceedings.neurips.cc/paper_files/paper/2024/file/11f5520daf9132775e8604e89f53925a-Paper-Conference.pdf},
+    volume = {37},
+    year = {2024}
 }
 
 @INPROCEEDINGS{wen2023interactive,
