@@ -99,11 +99,16 @@ Grateful to the authors of [CTR-GCN](https://github.com/Uason-Chen/CTR-GCN), [In
 
 If you find this work or code helpful in your research, please consider citing:
 ```
-@inproceedings{wen2024chase,
-    title={CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition},
-    author={Yuhang Wen and Mengyuan Liu and Songtao Wu and Beichen Ding},
-    booktitle={Thirty-eighth Conference on Neural Information Processing Systems (NeurIPS)},
-    year={2024},
+@inproceedings{NEURIPS2024_wen2024chase,
+    author = {Wen, Yuhang and Liu, Mengyuan and Wu, Songtao and Ding, Beichen},
+    booktitle = {Advances in Neural Information Processing Systems},
+    editor = {A. Globerson and L. Mackey and D. Belgrave and A. Fan and U. Paquet and J. Tomczak and C. Zhang},
+    pages = {9388--9420},
+    publisher = {Curran Associates, Inc.},
+    title = {CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition},
+    url = {https://proceedings.neurips.cc/paper_files/paper/2024/file/11f5520daf9132775e8604e89f53925a-Paper-Conference.pdf},
+    volume = {37},
+    year = {2024}
 }
 
 @INPROCEEDINGS{wen2023interactive,
