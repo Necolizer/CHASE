@@ -5,3 +5,4 @@ from model import HDGCN
 from model import STSANet
 from model import InfoGCN
 from model import DeGCN
+from model import HyperGCN

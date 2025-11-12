@@ -62,6 +62,28 @@ def get_loss_func(loss_func, loss_args):
             out_channels=loss_args['out_channels'],
             gain=loss_args['gain'],
         )
+    elif loss_func == 'HyperGCN_Loss':
+        loss = HyperGCN_Loss(
+            LabelSmoothingCrossEntropy=LabelSmoothingCrossEntropy(smoothing=loss_args['smoothing'], temperature=loss_args['temperature']),
+            weights=loss_args['weights']
+        )
+    elif loss_func == 'HyperGCN_Loss_MBMMD':
+        loss = HyperGCN_Loss_MBMMD(
+            LabelSmoothingCrossEntropy=LabelSmoothingCrossEntropy(smoothing=loss_args['smoothing'], temperature=loss_args['temperature']),
+            MMDLoss=MMDLoss(),
+            weights=loss_args['weights']
+        )
+    elif loss_func == 'HyperGCN_Loss_GROUP':
+        loss = HyperGCN_Loss_GROUP(
+            LabelSmoothingCrossEntropy=LabelSmoothingCrossEntropy(smoothing=loss_args['smoothing'], temperature=loss_args['temperature']),
+            weights=loss_args['weights']
+        )
+    elif loss_func == 'HyperGCN_Loss_MBMMD_GROUP':
+        loss = HyperGCN_Loss_MBMMD_GROUP(
+            LabelSmoothingCrossEntropy=LabelSmoothingCrossEntropy(smoothing=loss_args['smoothing'], temperature=loss_args['temperature']),
+            MMDLoss=MMDLoss(),
+            weights=loss_args['weights']
+        )
     else:
         print('Loss Not Included')
         loss = None
@@ -299,3 +321,115 @@ class InfoGCN_Loss_MBMMD_GROUP(nn.Module):
         Np, Mp, Cp = x_tuple[2].size()
 
         return self.weights[0] * (self.LSCE(x_tuple[0], target) + self.LSCE(x_tuple[2].view(Np*Mp, Cp), target_person.view(Np*Mp)) ) + self.weights[1] * info_mmd_loss + self.weights[2] * l2_z_mean + self.weights[-1] * mpmmd
+
+
+class DivergenceLoss(nn.Module):
+    def __init__(self):
+        super(DivergenceLoss, self).__init__()
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        V, C = x[0].size()
+        loss = 0
+
+        for i in x:
+            norm = torch.norm(i, dim=-1, keepdim=True, p=2)
+            norm = norm @ norm.T
+            loss_i = i @ i.T
+            loss_i = loss_i / (norm + 1e-8)
+            loss_p = self.relu(loss_i)
+            loss_p = (loss_p.sum() - V) / (V * (V - 1))
+            loss += loss_p
+
+        return loss / len(x)
+
+class HyperGCN_Loss(nn.Module):
+    def __init__(self, LabelSmoothingCrossEntropy, weights=[1.0, 1.0]):
+        super(HyperGCN_Loss, self).__init__()
+
+        assert len(weights) == 2
+
+        self.LSCE = LabelSmoothingCrossEntropy
+        self.Divergence = DivergenceLoss()
+        self.weights = weights
+
+    def forward(self, x_tuple, target):
+
+        return self.weights[0] * self.LSCE(x_tuple[0], target) + self.weights[1] * self.Divergence(x_tuple[1])
+    
+
+class HyperGCN_Loss_MBMMD(nn.Module):
+    def __init__(self, LabelSmoothingCrossEntropy, MMDLoss, weights=[1.0, 1.0, 0.1]):
+        super(HyperGCN_Loss_MBMMD, self).__init__()
+
+        assert len(weights) == 3
+
+        self.LSCE = LabelSmoothingCrossEntropy
+        self.MMD = MMDLoss
+        self.Divergence = DivergenceLoss()
+        self.weights = weights
+
+    def forward(self, x_tuple, target):
+
+        N, M, C = x_tuple[-1].size()
+
+        mpmmd = self.MMD(x_tuple[-2].view(N*M, C).contiguous(), x_tuple[-1].view(N*M, C).contiguous())
+
+        return self.weights[0] * self.LSCE(x_tuple[0], target) + self.weights[1] * self.Divergence(x_tuple[1]) + self.weights[-1] * mpmmd
+
+
+class HyperGCN_Loss_GROUP(nn.Module):
+    def __init__(self, LabelSmoothingCrossEntropy, weights=[1.0, 1.0]):
+        super(HyperGCN_Loss_GROUP, self).__init__()
+
+        assert len(weights) == 2
+
+        self.LSCE = LabelSmoothingCrossEntropy
+        self.Divergence = DivergenceLoss()
+        self.weights = weights
+
+    def forward(self, x_tuple, target, target_person):
+        # Expect x_tuple layout similar to other GROUP losses:
+        # x_tuple[0] -> main logits
+        # x_tuple[1] -> embeddings used for divergence
+        # x_tuple[2] -> group/person logits
+
+        Np, Mp, Cp = x_tuple[2].size()
+
+        loss_cls = self.LSCE(x_tuple[0], target)
+        loss_group = self.LSCE(x_tuple[2].view(Np*Mp, Cp), target_person.view(Np*Mp))
+        loss_div = self.Divergence(x_tuple[1])
+
+        return self.weights[0] * (loss_cls + loss_group) + self.weights[1] * loss_div
+
+
+class HyperGCN_Loss_MBMMD_GROUP(nn.Module):
+    def __init__(self, LabelSmoothingCrossEntropy, MMDLoss, weights=[1.0, 1.0, 0.1]):
+        super(HyperGCN_Loss_MBMMD_GROUP, self).__init__()
+
+        assert len(weights) == 3
+
+        self.LSCE = LabelSmoothingCrossEntropy
+        self.MMD = MMDLoss
+        self.Divergence = DivergenceLoss()
+        self.weights = weights
+
+    def forward(self, x_tuple, target, target_person):
+        # Layout expectation similar to other MBMMD_GROUP variants:
+        # x_tuple[-2], x_tuple[-1] -> inputs for MMD (view as N*M x C)
+        # x_tuple[0] -> main logits
+        # x_tuple[1] -> embeddings for Divergence
+        # x_tuple[2] -> group/person logits
+
+        # compute mpmmd from last two tuple entries
+        N, M, C = x_tuple[-1].size()
+        mpmmd = self.MMD(x_tuple[-2].view(N*M, C).contiguous(), x_tuple[-1].view(N*M, C).contiguous())
+
+        # compute classification losses (main + group)
+        Np, Mp, Cp = x_tuple[2].size()
+        loss_cls = self.LSCE(x_tuple[0], target)
+        loss_group = self.LSCE(x_tuple[2].view(Np*Mp, Cp), target_person.view(Np*Mp))
+
+        loss_div = self.Divergence(x_tuple[1])
+
+        return self.weights[0] * (loss_cls + loss_group) + self.weights[1] * loss_div + self.weights[-1] * mpmmd

@@ -21,8 +21,8 @@ Detailed Implementation: See folder `NeurIPS24` [README](./NeurIPS24/README.md)
 To clone the `main` branch only (for code) and exclude the `gh-pages` branch (for project page), use the following `git` command:
 ```shell
 git clone -b main https://github.com/Necolizer/CHASE.git
+pip install -r requirements.txt
 cd ./NeurIPS24
-pip install -r requirements.txt 
 ```
 
 For datasets:

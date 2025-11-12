@@ -1,0 +1,38 @@
+import sys
+import numpy as np
+
+sys.path.extend(['../'])
+from . import tools
+
+num_node = 21
+self_link = [(i, i) for i in range(num_node)]
+inward = [
+    (1,2), (2,3), (3,4), (4,1),
+    (1,5), (2,6), (3,7), (4,8),
+    (5,6), (6,7), (7,8), (8,5),
+                    ]
+outward = [(j, i) for (i, j) in inward]
+neighbor = inward + outward
+
+class Graph:
+    def __init__(self, hyper_joints=0, labeling_mode='spatial'):
+        self.num_node = num_node
+        self.self_link = self_link
+        self.inward = inward
+        self.outward = outward
+        self.neighbor = neighbor
+        self.hyper_joints = hyper_joints
+        self.A = self.get_adjacency_matrix(labeling_mode)
+
+    def get_adjacency_matrix(self, labeling_mode=None):
+        if labeling_mode is None:
+            return self.A
+        if labeling_mode == 'spatial':
+            A = tools.get_spatial_graph(num_node, self_link, inward, outward)
+        elif labeling_mode == 'spatial_ensemble':
+            A = tools.get_spatial_graph_ensemble(num_node, self_link, inward, outward, 8)
+        elif labeling_mode == 'virtual_ensemble':
+            A = tools.get_virtual_graph_ensemble(num_node, self_link, inward, outward, self.hyper_joints, 8)
+        else:
+            raise ValueError()
+        return A
