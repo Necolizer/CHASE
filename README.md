@@ -1,15 +1,15 @@
-# CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition
+# [IJCV'26] De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift 
 
 Here's the official implementation of 
-1. De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift (Under Review)
-2. [CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition](https://arxiv.org/abs/2410.07153) accepted in [NeurIPS 2024](https://nips.cc/virtual/2024/poster/94816).
+1. [De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift](https://link.springer.com/article/10.1007/s11263-026-03037-1) accepted by International Journal of Computer Vision (IJCV).
+2. [CHASE: Learning Convex Hull Adaptive Shift for Skeleton-based Multi-Entity Action Recognition](https://arxiv.org/abs/2410.07153) accepted by [NeurIPS 2024](https://nips.cc/virtual/2024/poster/94816).
 
 ![](https://github.com/Necolizer/CHASE/blob/gh-pages/static/images/EntityBias.svg)
 
 ![](https://github.com/Necolizer/CHASE/blob/gh-pages/static/images/Viz.svg)
 
 
-## 1. De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift
+## 1. [IJCV'26] De-biasing Skeleton-based Action Recognition with Convex Hull Adaptive Shift
 
 Detailed Implementation: See folder `JournalSubmission` [README 1](./JournalSubmission/CHASE-Joint/README.md) & [README 2](./JournalSubmission/CHASE-SubEntity/README.md)
 
@@ -41,6 +41,17 @@ Checkpoints of the best backbone for each benchmark are provided in this [Huggin
 
 If you find this work or code helpful in your research, please consider citing:
 ```
+@article{liu2026debiasing,
+  title = {De-biasing Skeleton-Based Action Recognition with Convex Hull Adaptive Shift},
+  author = {Liu, Mengyuan and Wen, Yuhang and Zhang, Yi and Wu, Songtao and Liu, Hong and Yuan, Junsong and Ding, Beichen},
+  journal = {International Journal of Computer Vision},
+  volume = {134},
+  number = {10},
+  pages = {443},
+  year = {2026},
+  doi = {10.1007/s11263-026-03037-1},
+}
+
 @inproceedings{NEURIPS2024_wen2024chase,
     author = {Wen, Yuhang and Liu, Mengyuan and Wu, Songtao and Ding, Beichen},
     booktitle = {Advances in Neural Information Processing Systems},
@@ -51,14 +62,5 @@ If you find this work or code helpful in your research, please consider citing:
     url = {https://proceedings.neurips.cc/paper_files/paper/2024/file/11f5520daf9132775e8604e89f53925a-Paper-Conference.pdf},
     volume = {37},
     year = {2024}
-}
-
-@INPROCEEDINGS{wen2023interactive,
-    author={Wen, Yuhang and Tang, Zixuan and Pang, Yunsheng and Ding, Beichen and Liu, Mengyuan},
-    booktitle={2023 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)}, 
-    title={Interactive Spatiotemporal Token Attention Network for Skeleton-Based General Interactive Action Recognition}, 
-    year={2023},
-    pages={7886-7892},
-    doi={10.1109/IROS55552.2023.10342472}
 }
 ```
